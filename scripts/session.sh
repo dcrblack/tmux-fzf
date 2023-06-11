@@ -5,9 +5,9 @@ source "$CURRENT_DIR/.envs"
 
 current_session=$(tmux display-message -p | sed -e 's/^\[//' -e 's/\].*//')
 if [[ -z "$TMUX_FZF_SESSION_FORMAT" ]]; then
-    sessions=$(tmux list-sessions | grep -v "^$current_session: ")
+    sessions=$(tmux list-sessions -F '#{session_last_attached} #S' | grep -v " $current_session" | sort --numeric-sort --reverse | cut -d' ' -f2-)
 else
-    sessions=$(tmux list-sessions -F "#S: $TMUX_FZF_SESSION_FORMAT" | grep -v "^$current_session: ")
+    sessions=$(tmux list-sessions -F "#{session_last_attached} #S: $TMUX_FZF_SESSION_FORMAT" | grep -v " $current_session" | sort --numeric-sort --reverse | cut -d' ' -f2-)
 fi
 
 FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --header='Select an action.'"
