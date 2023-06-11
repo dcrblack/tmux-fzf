@@ -20,7 +20,12 @@ fi
 [[ "$action" == "[cancel]" || -z "$action" ]] && exit
 if [[ "$action" != "detach" ]]; then
     if [[ "$action" == "new" ]]; then
-        tmux split-window -v -p 30 -b -c '#{pane_current_path}' \
+        if [[ -n $TMUX_CURRENT_DIR ]]; then
+            window_path='#{TMUX_CURRENT_DIR}'
+        else
+            window_path='#{pane_current_path}'
+        fi
+        tmux split-window -v -p 30 -b -c "$window_path" \
             'printf "Session Name: " && read session_name && tmux new-session -d -s ${session_name} && tmux switch-client -t ${session_name}'
         exit
     fi
